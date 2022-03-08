@@ -62,6 +62,11 @@ export function editedPost( state = {}, action ) {
 				...state,
 				context: action.context,
 			};
+		case 'SET_NAVIGATION_MENU':
+			return {
+				type: 'wp_navigation',
+				id: action.navigationMenuId,
+			};
 	}
 
 	return state;
