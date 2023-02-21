@@ -20,7 +20,7 @@ import {
 } from '@wordpress/block-editor';
 
 registerBlockType( 'gutenberg-examples/example-dynamic', {
-	apiVersion: 2,
+	apiVersion: 3,
 	title: 'Example: last post title',
 	icon: 'megaphone',
 	category: 'widgets',
@@ -144,7 +144,7 @@ import { useSelect } from '@wordpress/data';
 import { useBlockProps } from '@wordpress/block-editor';
 
 registerBlockType( 'gutenberg-examples/example-dynamic-block-supports', {
-	apiVersion: 2,
+	apiVersion: 3,
 	title: 'Example: last post title(block supports)',
 	icon: 'megaphone',
 	category: 'widgets',

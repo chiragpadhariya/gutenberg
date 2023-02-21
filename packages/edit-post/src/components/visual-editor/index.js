@@ -36,15 +36,13 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useMergeRefs } from '@wordpress/compose';
 import { arrowLeft } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
-import { parse } from '@wordpress/blocks';
+import { parse, store as blocksStore } from '@wordpress/blocks';
 import { store as coreStore } from '@wordpress/core-data';
 
 /**
  * Internal dependencies
  */
 import { store as editPostStore } from '../../store';
-
-const isGutenbergPlugin = process.env.IS_GUTENBERG_PLUGIN ? true : false;
 
 function MaybeIframe( { children, contentRef, shouldIframe, styles, style } ) {
 	const ref = useMouseMoveTypingReset();
@@ -113,7 +111,7 @@ export default function VisualEditor( { styles } ) {
 		editedPostTemplate = {},
 		wrapperBlockName,
 		wrapperUniqueId,
-		isBlockBasedTheme,
+		blockTypes,
 	} = useSelect( ( select ) => {
 		const {
 			isFeatureActive,
@@ -123,6 +121,7 @@ export default function VisualEditor( { styles } ) {
 		} = select( editPostStore );
 		const { getCurrentPostId, getCurrentPostType, getEditorSettings } =
 			select( editorStore );
+		const { getBlockTypes } = select( blocksStore );
 		const _isTemplateMode = isEditingTemplate();
 		let _wrapperBlockName;
 
@@ -152,9 +151,12 @@ export default function VisualEditor( { styles } ) {
 					: undefined,
 			wrapperBlockName: _wrapperBlockName,
 			wrapperUniqueId: getCurrentPostId(),
-			isBlockBasedTheme: editorSettings.__unstableIsBlockBasedTheme,
+			blockTypes: getBlockTypes(),
 		};
 	}, [] );
+	const hasV3BlocksOnly = blockTypes.every( ( type ) => {
+		return type.apiVersion >= 3;
+	} );
 	const { isCleanNewPost } = useSelect( editorStore );
 	const hasMetaBoxes = useSelect(
 		( select ) => select( editPostStore ).hasMetaBoxes(),
@@ -368,9 +370,7 @@ export default function VisualEditor( { styles } ) {
 				>
 					<MaybeIframe
 						shouldIframe={
-							( isGutenbergPlugin &&
-								isBlockBasedTheme &&
-								! hasMetaBoxes ) ||
+							( hasV3BlocksOnly && ! hasMetaBoxes ) ||
 							isTemplateMode ||
 							deviceType === 'Tablet' ||
 							deviceType === 'Mobile'

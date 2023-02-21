@@ -46,7 +46,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import { useBlockProps } from '@wordpress/block-editor';
 
 registerBlockType( 'myguten/simple', {
-	apiVersion: 2,
+	apiVersion: 3,
 	title: __( 'Simple Block', 'myguten' ),
 	category: 'widgets',
 

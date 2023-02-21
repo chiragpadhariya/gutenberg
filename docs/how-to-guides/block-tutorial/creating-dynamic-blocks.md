@@ -26,7 +26,7 @@ import { useSelect } from '@wordpress/data';
 import { useBlockProps } from '@wordpress/block-editor';
 
 registerBlockType( 'gutenberg-examples/example-dynamic', {
-	apiVersion: 2,
+	apiVersion: 3,
 	title: 'Example: last post',
 	icon: 'megaphone',
 	category: 'widgets',
@@ -62,7 +62,7 @@ registerBlockType( 'gutenberg-examples/example-dynamic', {
 		useBlockProps = blockEditor.useBlockProps;
 
 	registerBlockType( 'gutenberg-examples/example-dynamic', {
-		apiVersion: 2,
+		apiVersion: 3,
 		title: 'Example: last post',
 		icon: 'megaphone',
 		category: 'widgets',
@@ -165,7 +165,7 @@ import ServerSideRender from '@wordpress/server-side-render';
 import { useBlockProps } from '@wordpress/block-editor';
 
 registerBlockType( 'gutenberg-examples/example-dynamic', {
-	apiVersion: 2,
+	apiVersion: 3,
 	title: 'Example: last post',
 	icon: 'megaphone',
 	category: 'widgets',
@@ -194,7 +194,7 @@ registerBlockType( 'gutenberg-examples/example-dynamic', {
 		useBlockProps = blockEditor.useBlockProps;
 
 	registerBlockType( 'gutenberg-examples/example-dynamic', {
-		apiVersion: 2,
+		apiVersion: 3,
 		title: 'Example: last post',
 		icon: 'megaphone',
 		category: 'widgets',
