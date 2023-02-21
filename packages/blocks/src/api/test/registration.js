@@ -362,7 +362,7 @@ describe( 'blocks', () => {
 			const blockName = 'core/test-block-with-incompatible-keys';
 			unstable__bootstrapServerSideBlockDefinitions( {
 				[ blockName ]: {
-					api_version: 2,
+					api_version: 3,
 					provides_context: {
 						fontSize: 'fontSize',
 					},
