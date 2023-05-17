@@ -72,6 +72,7 @@ function render_block_core_post_template( $attributes, $content, $block ) {
 		$classnames .= ' has-link-color';
 	}
 
+	$wrapper_tag_name   = isset( $block->context['postsTagName'] ) ? $block->context['postsTagName'] : 'ul';
 	$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => trim( $classnames ) ) );
 
 	$content = '';
@@ -110,7 +111,8 @@ function render_block_core_post_template( $attributes, $content, $block ) {
 	wp_reset_postdata();
 
 	return sprintf(
-		'<ul %1$s>%2$s</ul>',
+		'<%1$s %2$s>%3$s</%1$s>',
+		tag_escape( $wrapper_tag_name ),
 		$wrapper_attributes,
 		$content
 	);
