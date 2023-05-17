@@ -177,8 +177,9 @@ export function setTemplatePart( templatePartId ) {
 
 export function setNavigationMenu( navigationMenuId ) {
 	return {
-		type: 'SET_NAVIGATION_MENU',
-		navigationMenuId,
+		type: 'SET_EDITED_POST',
+		postType: 'wp_navigation',
+		id: navigationMenuId,
 	};
 }
 
