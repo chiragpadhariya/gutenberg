@@ -142,17 +142,18 @@ export default function BlockEditor() {
 	const { clearSelectedBlock } = useDispatch( blockEditorStore );
 	const [ resizeObserver, sizes ] = useResizeObserver();
 
-	const isTemplatePart = templateType === 'wp_template_part';
+	const isFocusMode =
+		templateType === 'wp_template_part' || templateType === 'wp_navigation';
 
 	const hasBlocks = blocks.length !== 0;
 	const enableResizing =
-		isTemplatePart &&
+		isFocusMode &&
 		canvasMode !== 'view' &&
 		// Disable resizing in mobile viewport.
 		! isMobileViewport;
 	const isViewMode = canvasMode === 'view';
 	const showBlockAppender =
-		( isTemplatePart && hasBlocks ) || isViewMode ? false : undefined;
+		( isFocusMode && hasBlocks ) || isViewMode ? false : undefined;
 
 	return (
 		<ExperimentalBlockEditorProvider
@@ -176,7 +177,7 @@ export default function BlockEditor() {
 						<BlockTools
 							className={ classnames( 'edit-site-visual-editor', {
 								'is-focus-mode':
-									isTemplatePart || !! editorCanvasView,
+									isFocusMode || !! editorCanvasView,
 								'is-view-mode': isViewMode,
 							} ) }
 							__unstableContentRef={ contentRef }
