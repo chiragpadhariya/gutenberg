@@ -47,9 +47,11 @@ const LAYOUT = {
 	alignments: [],
 };
 
+const FOCUSABLE_ENTITIES = [ 'wp_template_part', 'wp_navigation' ];
+
 export default function BlockEditor() {
 	const { setIsInserterOpened } = useDispatch( editSiteStore );
-	const { storedSettings, templateType, canvasMode } = useSelect(
+	const { storedSettings, entityType, canvasMode } = useSelect(
 		( select ) => {
 			const { getSettings, getEditedPostType, getCanvasMode } = unlock(
 				select( editSiteStore )
@@ -57,7 +59,7 @@ export default function BlockEditor() {
 
 			return {
 				storedSettings: getSettings( setIsInserterOpened ),
-				templateType: getEditedPostType(),
+				entityType: getEditedPostType(),
 				canvasMode: getCanvasMode(),
 			};
 		},
@@ -94,10 +96,10 @@ export default function BlockEditor() {
 					return (
 						! postTypes ||
 						( Array.isArray( postTypes ) &&
-							postTypes.includes( templateType ) )
+							postTypes.includes( entityType ) )
 					);
 				} ),
-		[ settingsBlockPatterns, restBlockPatterns, templateType ]
+		[ settingsBlockPatterns, restBlockPatterns, entityType ]
 	);
 
 	const blockPatternCategories = useMemo(
@@ -129,7 +131,7 @@ export default function BlockEditor() {
 
 	const [ blocks, onInput, onChange ] = useEntityBlockEditor(
 		'postType',
-		templateType
+		entityType
 	);
 
 	const contentRef = useRef();
@@ -142,8 +144,7 @@ export default function BlockEditor() {
 	const { clearSelectedBlock } = useDispatch( blockEditorStore );
 	const [ resizeObserver, sizes ] = useResizeObserver();
 
-	const isFocusMode =
-		templateType === 'wp_template_part' || templateType === 'wp_navigation';
+	const isFocusMode = FOCUSABLE_ENTITIES.includes( entityType );
 
 	const hasBlocks = blocks.length !== 0;
 	const enableResizing =

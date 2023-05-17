@@ -74,5 +74,6 @@ export default function useInitEditedEntityFromURL() {
 		setPage,
 		setTemplate,
 		setTemplatePart,
+		setNavigationMenu,
 	] );
 }
