@@ -12,6 +12,7 @@
 		"query",
 		"queryContext",
 		"displayLayout",
+		"postsTagName",
 		"templateSlug",
 		"previewPostType"
 	],

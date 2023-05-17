@@ -35,6 +35,7 @@ export default function QueryContent( {
 		query,
 		displayLayout,
 		tagName: TagName = 'div',
+		postsTagName: PostsTagName = 'ul',
 	} = attributes;
 	const { __unstableMarkNextChangeAsNotPersistent } =
 		useDispatch( blockEditorStore );
@@ -83,6 +84,7 @@ export default function QueryContent( {
 		setAttributes( {
 			displayLayout: { ...displayLayout, ...newDisplayLayout },
 		} );
+
 	const htmlElementMessages = {
 		main: __(
 			'The <main> element should be used for the primary content of your document only. '
@@ -126,6 +128,19 @@ export default function QueryContent( {
 						setAttributes( { tagName: value } )
 					}
 					help={ htmlElementMessages[ TagName ] }
+				/>
+
+				<SelectControl
+					__nextHasNoMarginBottom
+					label={ __( 'Posts HTML element' ) }
+					options={ [
+						{ label: __( 'Default (<ul>)' ), value: 'ul' },
+						{ label: '<div>', value: 'div' },
+					] }
+					value={ PostsTagName }
+					onChange={ ( value ) =>
+						setAttributes( { postsTagName: value } )
+					}
 				/>
 			</InspectorControls>
 			<TagName { ...innerBlocksProps } />

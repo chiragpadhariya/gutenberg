@@ -32,6 +32,10 @@
 			"type": "string",
 			"default": "div"
 		},
+		"postsTagName": {
+			"type": "string",
+			"default": "ul"
+		},
 		"displayLayout": {
 			"type": "object",
 			"default": {
@@ -45,7 +49,8 @@
 	"providesContext": {
 		"queryId": "queryId",
 		"query": "query",
-		"displayLayout": "displayLayout"
+		"displayLayout": "displayLayout",
+		"postsTagName": "postsTagName"
 	},
 	"supports": {
 		"align": [ "wide", "full" ],

@@ -25,12 +25,12 @@ const TEMPLATE = [
 	[ 'core/post-excerpt' ],
 ];
 
-function PostTemplateInnerBlocks() {
+function PostTemplateInnerBlocks( { tagName: TagName = 'li' } ) {
 	const innerBlocksProps = useInnerBlocksProps(
 		{ className: 'wp-block-post' },
 		{ template: TEMPLATE, __unstableDisableLayoutClassNames: true }
 	);
-	return <li { ...innerBlocksProps } />;
+	return <TagName { ...innerBlocksProps } />;
 }
 
 function PostTemplateBlockPreview( {
@@ -38,6 +38,7 @@ function PostTemplateBlockPreview( {
 	blockContextId,
 	isHidden,
 	setActiveBlockContextId,
+	tagName: TagName = 'li',
 } ) {
 	const blockPreviewProps = useBlockPreview( {
 		blocks,
@@ -55,7 +56,7 @@ function PostTemplateBlockPreview( {
 	};
 
 	return (
-		<li
+		<TagName
 			{ ...blockPreviewProps }
 			tabIndex={ 0 }
 			// eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
@@ -95,6 +96,7 @@ export default function PostTemplateEdit( {
 		} = {},
 		queryContext = [ { page: 1 } ],
 		templateSlug,
+		postsTagName: PostsTagName,
 		displayLayout: { type: layoutType = 'flex', columns = 1 } = {},
 		previewPostType,
 	},
@@ -240,7 +242,7 @@ export default function PostTemplateEdit( {
 	// This ensures that when it is displayed again, the cached rendering of the
 	// block preview is used, instead of having to re-render the preview from scratch.
 	return (
-		<ul { ...blockProps }>
+		<PostsTagName { ...blockProps }>
 			{ blockContexts &&
 				blockContexts.map( ( blockContext ) => (
 					<BlockContextProvider
@@ -250,7 +252,9 @@ export default function PostTemplateEdit( {
 						{ blockContext.postId ===
 						( activeBlockContextId ||
 							blockContexts[ 0 ]?.postId ) ? (
-							<PostTemplateInnerBlocks />
+							<PostTemplateInnerBlocks
+								tagName={ PostsTagName === 'ul' ? 'li' : 'div' }
+							/>
 						) : null }
 						<MemoizedPostTemplateBlockPreview
 							blocks={ blocks }
@@ -261,9 +265,10 @@ export default function PostTemplateEdit( {
 								( activeBlockContextId ||
 									blockContexts[ 0 ]?.postId )
 							}
+							tagName={ PostsTagName === 'ul' ? 'li' : 'div' }
 						/>
 					</BlockContextProvider>
 				) ) }
-		</ul>
+		</PostsTagName>
 	);
 }
