@@ -20,7 +20,9 @@ function BackButton() {
 	const isNavigationMenu = location.params.postType === 'wp_navigation';
 	const previousTemplateId = location.state?.fromTemplateId;
 
-	if ( ( ! isTemplatePart || ! previousTemplateId ) && ! isNavigationMenu ) {
+	const isFocusMode = isTemplatePart || isNavigationMenu;
+
+	if ( ! isFocusMode || ! previousTemplateId ) {
 		return null;
 	}
 
