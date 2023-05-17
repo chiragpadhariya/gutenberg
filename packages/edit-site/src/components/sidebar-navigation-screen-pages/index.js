@@ -30,9 +30,11 @@ const PageItem = ( { postType = 'page', postId, ...props } ) => {
 export default function SidebarNavigationScreenPages() {
 	const { records: pages, isResolving: isLoadingPages } = useEntityRecords(
 		'postType',
-		'page'
+		'page',
+		{
+			per_page: -1,
+		}
 	);
-
 	const { records: templates, isResolving: isLoadingTemplates } =
 		useEntityRecords( 'postType', 'wp_template', {
 			per_page: -1,
