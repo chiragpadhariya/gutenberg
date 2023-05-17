@@ -175,6 +175,13 @@ export function setTemplatePart( templatePartId ) {
 	};
 }
 
+/**
+ * Action that sets a navigation menu.
+ *
+ * @param {string} navigationMenuId The Navigation Menu Post ID.
+ *
+ * @return {Object} Action object.
+ */
 export function setNavigationMenu( navigationMenuId ) {
 	return {
 		type: 'SET_EDITED_POST',
