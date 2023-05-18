@@ -17,7 +17,6 @@
 				"inherit": true
 			},
 			"tagName": "main",
-			"postsTagName": "ul",
 			"displayLayout": {
 				"type": "list"
 			},
