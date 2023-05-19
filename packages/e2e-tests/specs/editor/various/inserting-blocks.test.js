@@ -176,7 +176,7 @@ describe( 'Inserting blocks', () => {
 		await page.keyboard.type( '1.1' );
 
 		// After inserting the Buttons block the inner button block should be selected.
-		const selectedButtonBlocks = await page.$$(
+		const selectedButtonBlocks = await canvas().$$(
 			'.wp-block-button.is-selected'
 		);
 		expect( selectedButtonBlocks.length ).toBe( 1 );
@@ -186,7 +186,7 @@ describe( 'Inserting blocks', () => {
 			window.wp.data.dispatch( 'core/block-editor' ).clearSelectedBlock()
 		);
 		// Specifically click the root container appender.
-		await page.click(
+		await canvas().click(
 			'.block-editor-block-list__layout.is-root-container > .block-list-appender .block-editor-inserter__toggle'
 		);
 
@@ -248,7 +248,7 @@ describe( 'Inserting blocks', () => {
 		await insertBlock( 'Paragraph' );
 		await page.keyboard.type( 'First paragraph' );
 		await insertBlock( 'Image' );
-		const paragraphBlock = await page.$(
+		const paragraphBlock = await canvas().$(
 			'p[aria-label="Paragraph block"]'
 		);
 		paragraphBlock.click();
@@ -279,7 +279,7 @@ describe( 'Inserting blocks', () => {
 	it( 'inserts a block in proper place after having clicked `Browse All` from block appender', async () => {
 		await insertBlock( 'Group' );
 		// Select the default, selected Group layout from the variation picker.
-		await page.click(
+		await canvas().click(
 			'button[aria-label="Group: Gather blocks in a container."]'
 		);
 		await insertBlock( 'Paragraph' );
@@ -303,7 +303,7 @@ describe( 'Inserting blocks', () => {
 			'.block-editor-inserter__search input,.block-editor-inserter__search-input,input.block-editor-inserter__search';
 		await insertBlock( 'Group' );
 		// Select the default, selected Group layout from the variation picker.
-		await page.click(
+		await canvas().click(
 			'button[aria-label="Group: Gather blocks in a container."]'
 		);
 		await insertBlock( 'Paragraph' );
@@ -371,7 +371,7 @@ describe( 'Inserting blocks', () => {
 		async ( viewport ) => {
 			await setBrowserViewport( viewport );
 
-			await page.type(
+			await canvas().type(
 				'.block-editor-default-block-appender__content',
 				'Testing inserted block focus'
 			);

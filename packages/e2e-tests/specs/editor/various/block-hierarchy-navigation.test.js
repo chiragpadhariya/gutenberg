@@ -54,7 +54,7 @@ describe( 'Navigating the block hierarchy', () => {
 
 	it( 'should navigate using the list view sidebar', async () => {
 		await insertBlock( 'Columns' );
-		await page.click( '[aria-label="Two columns; equal split"]' );
+		await canvas().click( '[aria-label="Two columns; equal split"]' );
 
 		// Add a paragraph in the first column.
 		await page.keyboard.press( 'ArrowDown' ); // Navigate to inserter.
@@ -193,12 +193,12 @@ describe( 'Navigating the block hierarchy', () => {
 		// Insert a group block.
 		await insertBlock( 'Group' );
 		// Select the default, selected Group layout from the variation picker.
-		await page.click(
+		await canvas().click(
 			'button[aria-label="Group: Gather blocks in a container."]'
 		);
 		// Insert some random blocks.
 		// The last block shouldn't be a textual block.
-		await page.click( '.block-list-appender .block-editor-inserter' );
+		await canvas().click( '.block-list-appender .block-editor-inserter' );
 		const paragraphMenuItem = (
 			await page.$x( `//button//span[contains(text(), 'Paragraph')]` )
 		 )[ 0 ];
@@ -210,7 +210,7 @@ describe( 'Navigating the block hierarchy', () => {
 		expect( await getEditedPostContent() ).toMatchSnapshot();
 
 		// Unselect the blocks.
-		await page.click( '.editor-post-title' );
+		await canvas().click( '.editor-post-title' );
 
 		// Try selecting the group block using the Outline.
 		await page.click(
@@ -220,7 +220,7 @@ describe( 'Navigating the block hierarchy', () => {
 		await groupMenuItem.click();
 
 		// The group block's wrapper should be selected.
-		const isGroupBlockSelected = await page.evaluate(
+		const isGroupBlockSelected = await canvas().evaluate(
 			() =>
 				document.activeElement.getAttribute( 'data-type' ) ===
 				'core/group'

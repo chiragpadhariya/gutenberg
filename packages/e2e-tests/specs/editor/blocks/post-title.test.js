@@ -18,8 +18,8 @@ describe( 'Post Title block', () => {
 		await insertBlock( 'Post Title' );
 		const editablePostTitleSelector =
 			'.wp-block-post-title[contenteditable="true"]';
-		await page.waitForSelector( editablePostTitleSelector );
-		await page.focus( editablePostTitleSelector );
+		await canvas().waitForSelector( editablePostTitleSelector );
+		await canvas().focus( editablePostTitleSelector );
 
 		// Create a second list item.
 		await page.keyboard.type( 'Just tweaking the post title' );

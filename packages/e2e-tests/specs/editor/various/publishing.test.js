@@ -43,7 +43,7 @@ describe( 'Publishing', () => {
 			} );
 
 			it( `disables the save shortcut when a ${ postType } is locked`, async () => {
-				await page.type(
+				await canvas().type(
 					'.editor-post-title__input',
 					'E2E Test Post check save shortcut'
 				);

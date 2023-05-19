@@ -119,12 +119,14 @@ describe( 'cpt locking', () => {
 		} );
 
 		it( 'should not allow blocks to be inserted in inner blocks', async () => {
-			await page.click( 'button[aria-label="Two columns; equal split"]' );
+			await canvas().click(
+				'button[aria-label="Two columns; equal split"]'
+			);
 			await page.evaluate(
 				() => new Promise( window.requestIdleCallback )
 			);
 			expect(
-				await page.$(
+				await canvas().$(
 					'.wp-block-column .block-editor-button-block-appender'
 				)
 			).toBeNull();

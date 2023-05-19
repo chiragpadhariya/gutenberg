@@ -8,6 +8,7 @@ import {
 	clickOnMoreMenuItem,
 	createNewPost,
 	deactivatePlugin,
+	canvas,
 } from '@wordpress/e2e-test-utils';
 
 const clickOnBlockSettingsMenuItem = async ( buttonLabel ) => {
@@ -51,7 +52,7 @@ describe( 'Annotations', () => {
 			await page.$x( "//button[contains(text(), 'Add annotation')]" )
 		 )[ 0 ];
 		await addAnnotationButton.click();
-		await page.evaluate( () =>
+		await canvas().evaluate( () =>
 			document.querySelector( '.wp-block-paragraph' ).focus()
 		);
 	}
@@ -67,7 +68,7 @@ describe( 'Annotations', () => {
 			await page.$x( "//button[contains(text(), 'Remove annotations')]" )
 		 )[ 0 ];
 		await addAnnotationButton.click();
-		await page.evaluate( () =>
+		await canvas().evaluate( () =>
 			document.querySelector( '[contenteditable]' ).focus()
 		);
 	}
@@ -82,7 +83,7 @@ describe( 'Annotations', () => {
 
 		const annotation = annotations[ 0 ];
 
-		return await page.evaluate( ( el ) => el.innerText, annotation );
+		return await canvas().evaluate( ( el ) => el.innerText, annotation );
 	}
 
 	/**
@@ -91,7 +92,7 @@ describe( 'Annotations', () => {
 	 * @return {Promise<string>} Inner HTML.
 	 */
 	async function getRichTextInnerHTML() {
-		const htmlContent = await page.$$( '.wp-block-paragraph' );
+		const htmlContent = await canvas().$$( '.wp-block-paragraph' );
 		return await page.evaluate( ( el ) => {
 			return el.innerHTML;
 		}, htmlContent[ 0 ] );
@@ -115,7 +116,7 @@ describe( 'Annotations', () => {
 
 		await clickOnBlockSettingsMenuItem( 'Edit as HTML' );
 
-		const htmlContent = await page.$$(
+		const htmlContent = await canvas().$$(
 			'.block-editor-block-list__block-html-textarea'
 		);
 		const html = await page.evaluate( ( el ) => {
@@ -136,7 +137,7 @@ describe( 'Annotations', () => {
 		await page.keyboard.type( 'D' );
 
 		await removeAnnotations();
-		const htmlContent = await page.$$( '.wp-block-paragraph' );
+		const htmlContent = await canvas().$$( '.wp-block-paragraph' );
 		const html = await page.evaluate( ( el ) => {
 			return el.innerHTML;
 		}, htmlContent[ 0 ] );

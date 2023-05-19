@@ -13,9 +13,11 @@ import {
 
 async function getActiveLabel() {
 	return await page.evaluate( () => {
+		const { activeElement } =
+			document.activeElement.contentDocument ?? document;
 		return (
-			document.activeElement.getAttribute( 'aria-label' ) ||
-			document.activeElement.innerHTML
+			activeElement.getAttribute( 'aria-label' ) ||
+			activeElement.innerHTML
 		);
 	} );
 }
@@ -35,7 +37,11 @@ const tabThroughParagraphBlock = async ( paragraphText ) => {
 	await page.keyboard.press( 'Tab' );
 	await expect( await getActiveLabel() ).toBe( 'Paragraph block' );
 	await expect(
-		await page.evaluate( () => document.activeElement.innerHTML )
+		await page.evaluate( () => {
+			const { activeElement } =
+				document.activeElement.contentDocument ?? document;
+			return activeElement.innerHTML;
+		} )
 	).toBe( paragraphText );
 
 	await page.keyboard.press( 'Tab' );
@@ -119,11 +125,7 @@ describe( 'Order of block keyboard navigation', () => {
 		await page.mouse.click( box.x - 1, box.y );
 
 		await page.keyboard.press( 'Tab' );
-		await expect(
-			await page.evaluate( () => {
-				return document.activeElement.getAttribute( 'aria-label' );
-			} )
-		).toBe( 'Add title' );
+		await expect( await getActiveLabel() ).toBe( 'Add title' );
 
 		await page.keyboard.press( 'Tab' );
 		await expect( await getActiveLabel() ).toBe(
@@ -177,11 +179,7 @@ describe( 'Order of block keyboard navigation', () => {
 		);
 
 		await pressKeyWithModifier( 'shift', 'Tab' );
-		await expect(
-			await page.evaluate( () => {
-				return document.activeElement.getAttribute( 'aria-label' );
-			} )
-		).toBe( 'Add title' );
+		await expect( await getActiveLabel() ).toBe( 'Add title' );
 	} );
 
 	it( 'should navigate correctly with multi selection', async () => {

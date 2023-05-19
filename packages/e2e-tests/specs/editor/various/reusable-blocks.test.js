@@ -133,7 +133,7 @@ describe( 'Reusable blocks', () => {
 		);
 
 		// Make sure the reusable block has loaded properly before attempting to publish the post.
-		await page.waitForSelector( 'p[aria-label="Paragraph block"]' );
+		await canvas().waitForSelector( 'p[aria-label="Paragraph block"]' );
 
 		await publishPost();
 
@@ -143,8 +143,8 @@ describe( 'Reusable blocks', () => {
 		await page.waitForSelector( closePublishPanelSelector );
 		await page.click( closePublishPanelSelector );
 
-		await page.waitForSelector( 'p[aria-label="Paragraph block"]' );
-		await page.focus( 'p[aria-label="Paragraph block"]' );
+		await canvas().waitForSelector( 'p[aria-label="Paragraph block"]' );
+		await canvas().focus( 'p[aria-label="Paragraph block"]' );
 
 		// Change the block's content.
 		await page.keyboard.type( 'Einen ' );
@@ -153,7 +153,7 @@ describe( 'Reusable blocks', () => {
 		await saveAll();
 
 		// Check that its content is up to date.
-		const paragraphContent = await page.$eval(
+		const paragraphContent = await canvas().$eval(
 			'p[aria-label="Paragraph block"]',
 			( element ) => element.innerText
 		);
@@ -278,7 +278,7 @@ describe( 'Reusable blocks', () => {
 			] );
 		} );
 
-		await page.waitForXPath(
+		await canvas().waitForXPath(
 			'//*[contains(@class, "block-editor-warning")]/*[text()="Block has been deleted or is unavailable."]'
 		);
 
@@ -334,8 +334,8 @@ describe( 'Reusable blocks', () => {
 
 		// Make an edit to the reusable block and assert that there's only a
 		// paragraph in a reusable block.
-		await page.waitForSelector( 'p[aria-label="Paragraph block"]' );
-		await page.click( 'p[aria-label="Paragraph block"]' );
+		await canvas().waitForSelector( 'p[aria-label="Paragraph block"]' );
+		await canvas().click( 'p[aria-label="Paragraph block"]' );
 		await page.keyboard.type( '2' );
 		const selector =
 			'//div[@aria-label="Block: Reusable block"]//p[@aria-label="Paragraph block"][.="12"]';
@@ -361,7 +361,7 @@ describe( 'Reusable blocks', () => {
 		await page.reload();
 
 		// The quote block should have a visible preview in the sidebar for this test to be valid.
-		const quoteBlock = await page.waitForSelector(
+		const quoteBlock = await canvas().waitForSelector(
 			'.block-editor-block-list__block[aria-label="Block: Quote"]'
 		);
 		// Select the quote block.
@@ -380,7 +380,7 @@ describe( 'Reusable blocks', () => {
 		await nameInput.click();
 		await page.keyboard.type( 'Block with styles' );
 		await page.keyboard.press( 'Enter' );
-		const reusableBlock = await page.waitForSelector(
+		const reusableBlock = await canvas().waitForSelector(
 			'.block-editor-block-list__block[aria-label="Block: Reusable block"]'
 		);
 		expect( reusableBlock ).toBeTruthy();

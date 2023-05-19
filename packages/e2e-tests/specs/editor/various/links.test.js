@@ -51,7 +51,7 @@ describe( 'Links', () => {
 
 		await page.keyboard.press( 'Enter' );
 
-		const actualText = await page.evaluate(
+		const actualText = await canvas().evaluate(
 			() =>
 				document.querySelector( '.block-editor-rich-text__editable a' )
 					.textContent
@@ -208,7 +208,7 @@ describe( 'Links', () => {
 		await page.keyboard.type( 'https://wordpress.org/gutenberg' );
 
 		// Click somewhere else - it doesn't really matter where.
-		await page.click( '.editor-post-title' );
+		await canvas().click( '.editor-post-title' );
 	} );
 
 	const createAndReselectLink = async () => {
@@ -548,7 +548,7 @@ describe( 'Links', () => {
 		await page.keyboard.press( 'Enter' );
 
 		// Wait for Gutenberg to finish the job.
-		await page.waitForXPath(
+		await canvas().waitForXPath(
 			'//a[contains(@href,"w.org") and @target="_blank"]'
 		);
 
@@ -589,7 +589,7 @@ describe( 'Links', () => {
 		await page.keyboard.press( 'Space' );
 
 		// Wait for Gutenberg to finish the job.
-		await page.waitForXPath(
+		await canvas().waitForXPath(
 			'//a[contains(@href,"wordpress.org") and not(@target)]'
 		);
 
@@ -763,7 +763,7 @@ describe( 'Links', () => {
 			await page.keyboard.press( 'Enter' );
 
 			// Check the created link reflects the link text.
-			const actualLinkText = await page.evaluate(
+			const actualLinkText = await canvas().evaluate(
 				() =>
 					document.querySelector(
 						'.block-editor-rich-text__editable a'
@@ -1014,7 +1014,7 @@ describe( 'Links', () => {
 
 			await page.keyboard.press( 'Enter' );
 
-			const richTextText = await page.evaluate(
+			const richTextText = await canvas().evaluate(
 				() =>
 					document.querySelector(
 						'.block-editor-rich-text__editable'
@@ -1023,7 +1023,7 @@ describe( 'Links', () => {
 			// Check that the correct (i.e. last) instance of "a" was replaced with "z".
 			expect( richTextText ).toBe( 'a b c z' );
 
-			const richTextLink = await page.evaluate(
+			const richTextLink = await canvas().evaluate(
 				() =>
 					document.querySelector(
 						'.block-editor-rich-text__editable a'
