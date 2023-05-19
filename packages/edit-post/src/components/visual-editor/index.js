@@ -44,6 +44,8 @@ import { store as coreStore } from '@wordpress/core-data';
  */
 import { store as editPostStore } from '../../store';
 
+const isGutenbergPlugin = process.env.IS_GUTENBERG_PLUGIN ? true : false;
+
 function MaybeIframe( { children, contentRef, shouldIframe, styles, style } ) {
 	const ref = useMouseMoveTypingReset();
 
@@ -111,6 +113,7 @@ export default function VisualEditor( { styles } ) {
 		editedPostTemplate = {},
 		wrapperBlockName,
 		wrapperUniqueId,
+		isBlockBasedTheme,
 		blockTypes,
 	} = useSelect( ( select ) => {
 		const {
@@ -151,6 +154,7 @@ export default function VisualEditor( { styles } ) {
 					: undefined,
 			wrapperBlockName: _wrapperBlockName,
 			wrapperUniqueId: getCurrentPostId(),
+			isBlockBasedTheme: editorSettings.__unstableIsBlockBasedTheme,
 			blockTypes: getBlockTypes(),
 		};
 	}, [] );
@@ -370,7 +374,9 @@ export default function VisualEditor( { styles } ) {
 				>
 					<MaybeIframe
 						shouldIframe={
-							( hasV3BlocksOnly && ! hasMetaBoxes ) ||
+							( ( hasV3BlocksOnly ||
+								( isGutenbergPlugin && isBlockBasedTheme ) ) &&
+								! hasMetaBoxes ) ||
 							isTemplateMode ||
 							deviceType === 'Tablet' ||
 							deviceType === 'Mobile'
