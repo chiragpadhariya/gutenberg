@@ -38,7 +38,7 @@ test.describe( 'Keep styles on block transforms', () => {
 		editor,
 	} ) => {
 		// Create a paragraph block with some content.
-		await editor.canvas.click( '' );
+		await editor.canvas.click( 'role=button[name="Add default block"i]' );
 		await page.keyboard.type( 'Line 1 to be made large' );
 		await page.keyboard.press( 'Enter' );
 		await page.keyboard.type( 'Line 2 to be made large' );
