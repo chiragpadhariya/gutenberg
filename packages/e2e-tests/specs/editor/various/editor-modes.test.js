@@ -11,6 +11,7 @@ import {
 	pressKeyTimes,
 	pressKeyWithModifier,
 	openTypographyToolsPanelMenu,
+	canvas,
 } from '@wordpress/e2e-test-utils';
 
 describe( 'Editing modes (visual/HTML)', () => {
@@ -138,7 +139,7 @@ describe( 'Editing modes (visual/HTML)', () => {
 		const editPosition = textContent.indexOf( 'Hello' );
 
 		// Replace the word 'Hello' with 'Hi'.
-		await page.click( '.editor-post-title__input' );
+		await canvas().click( '.editor-post-title__input' );
 		await page.keyboard.press( 'Tab' );
 		await pressKeyTimes( 'ArrowRight', editPosition );
 		await pressKeyTimes( 'Delete', 5 );

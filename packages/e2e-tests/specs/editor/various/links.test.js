@@ -9,6 +9,7 @@ import {
 	pressKeyWithModifier,
 	showBlockToolbar,
 	pressKeyTimes,
+	canvas,
 } from '@wordpress/e2e-test-utils';
 
 describe( 'Links', () => {
@@ -346,7 +347,7 @@ describe( 'Links', () => {
 
 	const createPostWithTitle = async ( titleText ) => {
 		await createNewPost();
-		await page.type( '.editor-post-title__input', titleText );
+		await canvas().type( '.editor-post-title__input', titleText );
 		await page.click( '.editor-post-publish-panel__toggle' );
 
 		// Disable reason: Wait for the animation to complete, since otherwise the
