@@ -206,12 +206,7 @@ export default function Editor() {
 						<InterfaceSkeleton
 							enableRegionNavigation={ false }
 							className={ showIconLabels && 'show-icon-labels' }
-							notices={
-								( isEditMode ||
-									window?.__experimentalEnableThemePreviews ) && (
-									<EditorSnackbars />
-								)
-							}
+							notices={ <EditorSnackbars /> }
 							content={
 								<>
 									<GlobalStylesRenderer />
