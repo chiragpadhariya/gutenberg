@@ -382,7 +382,7 @@ describe( 'Change detection', () => {
 		] );
 
 		// Change the paragraph's `drop cap`.
-		await page.click( '[data-type="core/paragraph"]' );
+		await canvas().click( '[data-type="core/paragraph"]' );
 
 		await openTypographyToolsPanelMenu();
 		await page.click( 'button[aria-label="Show Drop cap"]' );
@@ -391,7 +391,7 @@ describe( 'Change detection', () => {
 			"//label[contains(text(), 'Drop cap')]"
 		);
 		await dropCapToggle.click();
-		await page.click( '[data-type="core/paragraph"]' );
+		await canvas().click( '[data-type="core/paragraph"]' );
 
 		// Check that the post is dirty.
 		await page.waitForSelector( '.editor-post-save-draft' );
@@ -403,7 +403,7 @@ describe( 'Change detection', () => {
 		] );
 
 		// Change the paragraph's `drop cap` again.
-		await page.click( '[data-type="core/paragraph"]' );
+		await canvas().click( '[data-type="core/paragraph"]' );
 		await dropCapToggle.click();
 
 		// Check that the post is dirty.

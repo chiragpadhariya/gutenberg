@@ -10,6 +10,7 @@ import {
 	openDocumentSettingsSidebar,
 	getListViewBlocks,
 	switchBlockInspectorTab,
+	canvas,
 } from '@wordpress/e2e-test-utils';
 
 async function openListViewSidebar() {
@@ -114,7 +115,7 @@ describe( 'Navigating the block hierarchy', () => {
 	it( 'should navigate block hierarchy using only the keyboard', async () => {
 		await insertBlock( 'Columns' );
 		await openDocumentSettingsSidebar();
-		await page.click( '[aria-label="Two columns; equal split"]' );
+		await canvas().click( '[aria-label="Two columns; equal split"]' );
 
 		// Add a paragraph in the first column.
 		await page.keyboard.press( 'ArrowDown' ); // Navigate to inserter.
@@ -147,7 +148,9 @@ describe( 'Navigating the block hierarchy', () => {
 			'.is-highlighted[aria-label="Block: Column (3 of 3)"]'
 		);
 		await page.keyboard.press( 'Enter' );
-		await page.waitForSelector( '.is-selected[data-type="core/column"]' );
+		await canvas().waitForSelector(
+			'.is-selected[data-type="core/column"]'
+		);
 
 		// Insert text in the last column block.
 		await page.keyboard.press( 'ArrowDown' ); // Navigate to inserter.

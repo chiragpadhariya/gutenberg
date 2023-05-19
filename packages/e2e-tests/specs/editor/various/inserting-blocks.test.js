@@ -11,6 +11,7 @@ import {
 	searchForBlock,
 	setBrowserViewport,
 	pressKeyWithModifier,
+	canvas,
 } from '@wordpress/e2e-test-utils';
 
 /** @typedef {import('puppeteer-core').ElementHandle} ElementHandle */
@@ -165,7 +166,7 @@ describe( 'Inserting blocks', () => {
 		await page.keyboard.press( 'Enter' );
 
 		expect(
-			await page.waitForSelector( '[data-type="core/tag-cloud"]' )
+			await canvas().waitForSelector( '[data-type="core/tag-cloud"]' )
 		).not.toBeNull();
 	} );
 
@@ -222,7 +223,7 @@ describe( 'Inserting blocks', () => {
 		expect( await getEditedPostContent() ).toMatchSnapshot();
 
 		// Using the between inserter.
-		const insertionPoint = await page.$( '[data-type="core/heading"]' );
+		const insertionPoint = await canvas().$( '[data-type="core/heading"]' );
 		const rect = await insertionPoint.boundingBox();
 		await page.mouse.move( rect.x + rect.width / 2, rect.y - 10, {
 			steps: 10,
@@ -284,8 +285,10 @@ describe( 'Inserting blocks', () => {
 		await insertBlock( 'Paragraph' );
 		await page.keyboard.type( 'Paragraph after group' );
 		// Click the Group first to make the appender inside it clickable.
-		await page.click( '[data-type="core/group"]' );
-		await page.click( '[data-type="core/group"] [aria-label="Add block"]' );
+		await canvas().click( '[data-type="core/group"]' );
+		await canvas().click(
+			'[data-type="core/group"] [aria-label="Add block"]'
+		);
 		const browseAll = await page.waitForXPath(
 			'//button[text()="Browse all"]'
 		);
@@ -306,8 +309,10 @@ describe( 'Inserting blocks', () => {
 		await insertBlock( 'Paragraph' );
 		await page.keyboard.type( 'Text' );
 		// Click the Group first to make the appender inside it clickable.
-		await page.click( '[data-type="core/group"]' );
-		await page.click( '[data-type="core/group"] [aria-label="Add block"]' );
+		await canvas().click( '[data-type="core/group"]' );
+		await canvas().click(
+			'[data-type="core/group"] [aria-label="Add block"]'
+		);
 		await page.waitForSelector( INSERTER_SEARCH_SELECTOR );
 		await page.focus( INSERTER_SEARCH_SELECTOR );
 		await pressKeyWithModifier( 'primary', 'a' );
@@ -337,7 +342,7 @@ describe( 'Inserting blocks', () => {
 		expect( inserterPanels.length ).toBe( 0 );
 
 		// The editable 'Read More' text should be focused.
-		const isFocusInBlock = await page.evaluate( () =>
+		const isFocusInBlock = await canvas().evaluate( () =>
 			document
 				.querySelector( '[data-type="core/more"]' )
 				.contains( document.activeElement )
@@ -373,7 +378,7 @@ describe( 'Inserting blocks', () => {
 
 			await insertBlock( 'Image' );
 
-			await page.waitForSelector( 'figure[data-type="core/image"]' );
+			await canvas().waitForSelector( 'figure[data-type="core/image"]' );
 
 			const selectedBlock = await page.evaluate( () => {
 				return wp.data.select( 'core/block-editor' ).getSelectedBlock();

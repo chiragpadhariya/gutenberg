@@ -112,7 +112,7 @@ test.describe( 'Paragraph', () => {
 			await dragHandle.hover();
 			await page.mouse.down();
 
-			const emptyParagraph = page.locator(
+			const emptyParagraph = editor.canvas.locator(
 				'[data-type="core/paragraph"][data-empty="true"]'
 			);
 			const boundingBox = await emptyParagraph.boundingBox();
@@ -140,7 +140,7 @@ test.describe( 'Paragraph', () => {
 				'<h2 class="wp-block-heading">My Heading</h2>'
 			);
 
-			const emptyParagraph = page.locator(
+			const emptyParagraph = editor.canvas.locator(
 				'[data-type="core/paragraph"][data-empty="true"]'
 			);
 			const boundingBox = await emptyParagraph.boundingBox();
@@ -173,7 +173,7 @@ test.describe( 'Paragraph', () => {
 					<!-- /wp:heading -->
 				` );
 
-				const emptyParagraph = page.locator(
+				const emptyParagraph = editor.canvas.locator(
 					'[data-type="core/paragraph"]'
 				);
 				const heading = page.locator( 'text=Heading' );
@@ -284,7 +284,7 @@ test.describe( 'Paragraph', () => {
 					<!-- /wp:paragraph -->
 				` );
 
-				const emptyParagraph = page.locator(
+				const emptyParagraph = editor.canvas.locator(
 					'[data-type="core/paragraph"]'
 				);
 				const heading = page.locator( 'text=Heading' );
@@ -382,7 +382,6 @@ test.describe( 'Paragraph', () => {
 
 			test( 'Both blocks are empty paragraph blocks', async ( {
 				editor,
-				page,
 				draggingUtils,
 			} ) => {
 				await editor.setContent( `
@@ -395,10 +394,10 @@ test.describe( 'Paragraph', () => {
 					<!-- /wp:paragraph -->
 				` );
 
-				const firstEmptyParagraph = page
+				const firstEmptyParagraph = editor.canvas
 					.locator( '[data-type="core/paragraph"]' )
 					.first();
-				const secondEmptyParagraph = page
+				const secondEmptyParagraph = editor.canvas
 					.locator( '[data-type="core/paragraph"]' )
 					.nth( 1 );
 

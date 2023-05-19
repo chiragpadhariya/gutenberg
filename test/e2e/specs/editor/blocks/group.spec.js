@@ -40,7 +40,7 @@ test.describe( 'Group', () => {
 		editor,
 		page,
 	} ) => {
-		await page.click( 'role=button[name="Add default block"i]' );
+		await editor.canvas.click( 'role=button[name="Add default block"i]' );
 		await page.keyboard.type( '/group' );
 		await expect(
 			page.locator( 'role=option[name="Group"i][selected]' )

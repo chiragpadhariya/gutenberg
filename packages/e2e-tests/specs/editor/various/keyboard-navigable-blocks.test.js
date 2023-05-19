@@ -8,6 +8,7 @@ import {
 	clickBlockAppender,
 	getEditedPostContent,
 	showBlockToolbar,
+	canvas,
 } from '@wordpress/e2e-test-utils';
 
 async function getActiveLabel() {
@@ -113,7 +114,7 @@ describe( 'Order of block keyboard navigation', () => {
 		}
 
 		// Clear the selected block.
-		const paragraph = await page.$( '[data-type="core/paragraph"]' );
+		const paragraph = await canvas().$( '[data-type="core/paragraph"]' );
 		const box = await paragraph.boundingBox();
 		await page.mouse.click( box.x - 1, box.y );
 
@@ -148,7 +149,7 @@ describe( 'Order of block keyboard navigation', () => {
 		}
 
 		// Clear the selected block.
-		const paragraph = await page.$( '[data-type="core/paragraph"]' );
+		const paragraph = await canvas().$( '[data-type="core/paragraph"]' );
 		const box = await paragraph.boundingBox();
 		await page.mouse.click( box.x - 1, box.y );
 

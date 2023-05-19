@@ -16,6 +16,7 @@ import {
 	saveDraft,
 	createReusableBlock,
 	publishPost,
+	canvas,
 } from '@wordpress/e2e-test-utils';
 
 const reusableBlockNameInputSelector =
@@ -83,7 +84,7 @@ describe( 'Reusable blocks', () => {
 		await page.keyboard.type( 'Surprised greeting block' );
 
 		// Quickly focus the paragraph block.
-		await page.click(
+		await canvas().click(
 			'.block-editor-block-list__block[data-type="core/block"] p'
 		);
 		await page.keyboard.press( 'Escape' ); // Enter navigation mode.
@@ -96,7 +97,7 @@ describe( 'Reusable blocks', () => {
 		await saveAllButDontPublish();
 
 		// Check that its content is up to date.
-		const text = await page.$eval(
+		const text = await canvas().$eval(
 			'.block-editor-block-list__block[data-type="core/block"] p',
 			( element ) => element.innerText
 		);
@@ -111,13 +112,13 @@ describe( 'Reusable blocks', () => {
 		await clickBlockToolbarButton( 'Convert to regular block' );
 
 		// Check that we have a paragraph block on the page.
-		const paragraphBlock = await page.$(
+		const paragraphBlock = await canvas().$(
 			'.block-editor-block-list__block[data-type="core/paragraph"]'
 		);
 		expect( paragraphBlock ).not.toBeNull();
 
 		// Check that its content is up to date.
-		const paragraphContent = await page.$eval(
+		const paragraphContent = await canvas().$eval(
 			'.block-editor-block-list__block[data-type="core/paragraph"]',
 			( element ) => element.innerText
 		);
@@ -297,13 +298,13 @@ describe( 'Reusable blocks', () => {
 		await page.reload();
 
 		// Wait for the paragraph to be loaded.
-		await page.waitForSelector(
+		await canvas().waitForSelector(
 			'.block-editor-block-list__block[data-type="core/paragraph"]'
 		);
 		// The first click selects the reusable block wrapper.
 		// The second click selects the actual paragraph block.
-		await page.click( '.wp-block-block' );
-		await page.focus(
+		await canvas().click( '.wp-block-block' );
+		await canvas().focus(
 			'.block-editor-block-list__block[data-type="core/paragraph"]'
 		);
 		await pressKeyWithModifier( 'primary', 'a' );

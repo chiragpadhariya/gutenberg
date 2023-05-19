@@ -51,7 +51,7 @@ test.describe( 'Gallery', () => {
 			plainText: `[gallery ids="${ uploadedMedia.id }"]`,
 		} );
 
-		await page.click( 'role=button[name="Add default block"i]' );
+		await editor.canvas.click( 'role=button[name="Add default block"i]' );
 		await pageUtils.pressKeys( 'primary+v' );
 
 		const img = page.locator(
