@@ -192,21 +192,17 @@ function ListViewBlock( {
 				return focus.focusable.find( row )[ 0 ];
 			};
 
-			let focusElement = getFocusElement();
-			if ( focusElement ) {
-				focusElement.focus();
-			} else {
-				// The element hasn't been painted yet. Defer focusing on the next frame.
-				// This could happen when all blocks have been deleted and the default block
-				// hasn't been added to the editor yet.
-				window.requestAnimationFrame( () => {
-					focusElement = getFocusElement();
-					// Ignore if the element still doesn't exist.
-					if ( focusElement ) {
-						focusElement.focus();
-					}
-				} );
-			}
+			// Defer focusing on the next frame so that React can update the description
+			// of the focused element before some Screen Readers read it.
+			// It also solves problem when all blocks have been deleted and the default
+			// block hasn't been rendered yet.
+			window.requestAnimationFrame( () => {
+				const focusElement = getFocusElement();
+				// Ignore if the element doesn't exist.
+				if ( focusElement ) {
+					focusElement.focus();
+				}
+			} );
 		},
 		[ selectBlock, treeGridElementRef ]
 	);
