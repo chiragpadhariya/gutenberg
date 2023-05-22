@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, _x, sprintf } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
 	__experimentalUseNavigator as useNavigator,
@@ -9,6 +9,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	ExternalLink,
+	ResponsiveWrapper,
 } from '@wordpress/components';
 import {
 	store as coreStore,
@@ -17,6 +18,9 @@ import {
 } from '@wordpress/core-data';
 import { decodeEntities } from '@wordpress/html-entities';
 import { pencil } from '@wordpress/icons';
+import { humanTimeDiff } from '@wordpress/date';
+import { count as wordCount } from '@wordpress/wordcount';
+import { getMediaDetails } from '@wordpress/editor';
 
 /**
  * Internal dependencies
@@ -28,63 +32,64 @@ import SidebarButton from '../sidebar-button';
 import SidebarNavigationSubtitle from '../sidebar-navigation-subtitle';
 import SidebarDetails from '../sidebar-navigation-data-list';
 
-function countWordsInHTML( htmlString ) {
-	const parser = new window.DOMParser();
-	const doc = parser.parseFromString( htmlString, 'text/html' );
-
-	let wordCount = 0;
-
-	function countWords( node ) {
-		if ( node.nodeType === 3 ) {
-			const text = node.textContent.trim();
-
-			if ( text !== '' ) {
-				const words = text.split( /\s+/ );
-				wordCount += words.length;
-			}
-		} else if ( node.nodeType === 1 ) {
-			const children = node.childNodes;
-			for ( let i = 0; i < children.length; i++ ) {
-				countWords( children[ i ] );
-			}
-		}
-	}
-
-	countWords( doc.body );
-	return wordCount;
-}
-const estimateReadingTime = ( wordCount, wordsPerMinute = 200 ) =>
-	Math.ceil( wordCount / wordsPerMinute );
+// Taken from packages/editor/src/components/time-to-read/index.js.
+const AVERAGE_READING_RATE = 189;
+const POST_STATUS_LABELS = {
+	publish: __( 'Published' ),
+	future: __( 'Scheduled' ),
+	draft: __( 'Draft' ),
+	pending: __( 'Pending' ),
+};
 
 function getPageDetails( page ) {
 	if ( ! page ) {
 		return [];
 	}
-
-	const wordCount = countWordsInHTML( page?.content?.rendered ) || 0;
-	const readingTime = estimateReadingTime( wordCount );
-
-	return [
-		{
-			label: 'Template',
-			value: page?.templateTitle,
-		},
+	const details = [
 		{
 			label: 'Parent',
 			value: page?.parentTitle,
 		},
-		{
-			label: 'Words',
-			value: wordCount.toLocaleString() || 'Unknown',
-		},
-		{
-			label: 'Time to read',
-			value:
-				readingTime > 1
-					? `${ readingTime.toLocaleString() } mins`
-					: '1 min',
-		},
 	];
+
+	if ( page?.templateTitle ) {
+		details.push( {
+			label: 'Template',
+			value: page.templateTitle,
+		} );
+	}
+
+	/*
+	 * translators: If your word count is based on single characters (e.g. East Asian characters),
+	 * enter 'characters_excluding_spaces' or 'characters_including_spaces'. Otherwise, enter 'words'.
+	 * Do not translate into your own language.
+	 */
+	const wordCountType = _x( 'words', 'Word count type. Do not translate!' );
+	const wordsCounted = page?.content?.raw
+		? wordCount( page.content.raw, wordCountType )
+		: 0;
+	const readingTime = Math.round( wordsCounted / AVERAGE_READING_RATE );
+
+	if ( wordsCounted ) {
+		details.push(
+			{
+				label: 'Words',
+				value: wordsCounted.toLocaleString() || __( 'Unknown' ),
+			},
+			{
+				label: 'Time to read',
+				value:
+					readingTime > 1
+						? sprintf(
+								/* translators: %s: is the number of minutes. */
+								__( '%s mins' ),
+								readingTime.toLocaleString()
+						  )
+						: __( '< 1 min' ),
+			}
+		);
+	}
+	return details;
 }
 
 export default function SidebarNavigationScreenPage() {
@@ -94,18 +99,32 @@ export default function SidebarNavigationScreenPage() {
 	} = useNavigator();
 
 	const { record } = useEntityRecord( 'postType', 'page', postId );
+
+	/*
+	 * Only custom template slugs are available in the post entity record
+	 * Pages using theme templates will not have a template slug.
+	 */
 	const { records: templates, isResolving: areTemplatesLoading } =
 		useEntityRecords( 'postType', 'wp_template', {
 			per_page: -1,
 		} );
-
 	const templateTitle = areTemplatesLoading
 		? ''
 		: templates?.find( ( template ) => template?.slug === record?.template )
-				?.title?.rendered || 'Default';
+				?.title?.rendered || '';
 
-	const parentTitle = useSelect(
+	const {
+		parentTitle,
+		featuredMediaDetails: { mediaWidth, mediaHeight, mediaSourceUrl },
+	} = useSelect(
 		( select ) => {
+			// Featured image.
+			const { getMedia } = select( coreStore );
+			const featuredMedia = record?.featured_media
+				? getMedia( record?.featured_media, { context: 'view' } )
+				: null;
+
+			// Parent page title.
 			const parent = record?.parent
 				? select( coreStore ).getEntityRecord(
 						'postType',
@@ -113,14 +132,17 @@ export default function SidebarNavigationScreenPage() {
 						record.parent
 				  )
 				: null;
-
+			let _parentTitle = __( 'Top level' );
 			if ( parent ) {
-				return parent?.title?.rendered
+				_parentTitle = parent?.title?.rendered
 					? decodeEntities( parent.title.rendered )
-					: 'No title';
+					: __( 'Untitled' );
 			}
 
-			return 'Top level';
+			return {
+				parentTitle: _parentTitle,
+				featuredMediaDetails: getMediaDetails( featuredMedia, postId ),
+			};
 		},
 		[ record ]
 	);
@@ -146,30 +168,54 @@ export default function SidebarNavigationScreenPage() {
 								{ record.link }
 							</ExternalLink>
 						) }
-						<PostStatus
-							status={ record.status }
-							date={ record.date }
-						/>
+						<HStack alignment="left" spacing={ 3 }>
+							<Text>
+								{ POST_STATUS_LABELS?.[ record.status ] ||
+									__( 'Unknown' ) }
+							</Text>
+							<Text>{ humanTimeDiff( record.date ) }</Text>
+						</HStack>
 					</VStack>
 				) : null
 			}
 			footer={
 				record && (
-					<PostModified
-						date={ record.modified }
-						user={ record.modifiedBy }
-					/>
+					<HStack
+						className="edit-site-sidebar-navigation-screen-page__modified"
+						alignment="left"
+						spacing={ 3 }
+					>
+						<div
+							className="edit-site-sidebar-navigation-screen-page__avatar"
+							aria-hidden="true"
+						/>
+						<Text>
+							Last modified { humanTimeDiff( record.modified ) }
+						</Text>
+					</HStack>
 				)
 			}
 			content={
 				<>
-					<img
-						alt={ record?.title || 'no description' }
-						className="edit-site-sidebar-navigation-screen__page-image"
-						src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
-					/>
+					{ record?.featured_media && mediaSourceUrl && (
+						<div className="edit-site-sidebar-navigation-screen-page__featured-media">
+							<ResponsiveWrapper
+								naturalWidth={ mediaWidth }
+								naturalHeight={ mediaHeight }
+								isInline
+							>
+								<img src={ mediaSourceUrl } alt="" />
+							</ResponsiveWrapper>
+						</div>
+					) }
 					{ record?.excerpt?.raw && (
-						<Text>{ decodeEntities( record?.excerpt?.raw ) }</Text>
+						<Text
+							className="edit-site-sidebar-navigation-screen-page__excerpt"
+							truncate={ true }
+							limit={ 200 }
+						>
+							{ decodeEntities( record?.excerpt?.raw ) }
+						</Text>
 					) }
 					<SidebarNavigationSubtitle>
 						Details
@@ -186,179 +232,3 @@ export default function SidebarNavigationScreenPage() {
 		/>
 	);
 }
-
-const statusLabels = {
-	publish: 'Published',
-	future: 'Scheduled',
-	draft: 'Draft',
-	pending: 'Pending',
-};
-
-function relativeTime( date1, date2 ) {
-	const diffInSeconds = Math.abs( date1.getTime() - date2.getTime() ) / 1000;
-
-	const units = [
-		{ name: 'second', limit: 60, in_seconds: 1 },
-		{ name: 'minute', limit: 3600, in_seconds: 60 },
-		{ name: 'hour', limit: 86400, in_seconds: 3600 },
-		{ name: 'day', limit: 604800, in_seconds: 86400 },
-		{ name: 'week', limit: 2629743, in_seconds: 604800 },
-		{ name: 'month', limit: 31556926, in_seconds: 2629743 },
-		{ name: 'year', limit: Infinity, in_seconds: 31556926 },
-	];
-
-	let i = 0,
-		unit;
-	while ( ( unit = units[ i++ ] ) ) {
-		if ( diffInSeconds < unit.limit || ! unit.limit ) {
-			const diff = Math.floor( diffInSeconds / unit.in_seconds );
-			return (
-				diff +
-				' ' +
-				unit.name +
-				( diff > 1 ? 's' : '' ) +
-				' ' +
-				( date1 > date2 ? 'ago' : 'from now' )
-			);
-		}
-	}
-}
-
-export const PostStatus = ( { status, date } ) => {
-	const statusLabel = statusLabels[ status ] ?? 'Unknown';
-	const formattedDate = date
-		? relativeTime( new Date(), new Date( date ) )
-		: null;
-
-	return (
-		<HStack alignment="left" spacing={ 3 }>
-			{ /* <StatusIcon status={ status } /> */ }
-			<Text>{ statusLabel }</Text>
-			{ formattedDate && <Text>{ formattedDate }</Text> }
-		</HStack>
-	);
-};
-
-// const StatusIcon = ( { status } ) => {
-// 	switch ( status ) {
-// 		case 'draft':
-// 			return <DraftIcon />;
-// 		case 'pending':
-// 			return <PendingIcon />;
-// 		case 'future':
-// 			return <ScheduledIcon />;
-// 		case 'publish':
-// 			return <PublishIcon />;
-// 	}
-// 	return null;
-// };
-
-const PostModified = ( { date } ) => {
-	return (
-		<HStack
-			className="edit-site-sidebar-modified"
-			alignment="left"
-			spacing={ 3 }
-		>
-			<div className="edit-site-sidebar-modified__avatar" />
-			<Text>
-				Last modified { relativeTime( new Date(), new Date( date ) ) }{ ' ' }
-				by Dan
-			</Text>
-		</HStack>
-	);
-};
-
-// const DraftIcon = () => (
-// 	<SVG
-// 		width="16"
-// 		height="16"
-// 		viewBox="0 0 16 16"
-// 		fill="none"
-// 		xmlns="http://www.w3.org/2000/svg"
-// 	>
-// 		<Path
-// 			d="M12 8C12 10.2091 10.2091 12 8 12C8 10.5 8 10.2091 8 8C8 5.79086 8 6 8 4C10.2091 4 12 5.79086 12 8Z"
-// 			fill="#F0B849"
-// 		/>
-// 	</SVG>
-// );
-
-// const PendingIcon = () => (
-// 	<SVG
-// 		width="16"
-// 		height="16"
-// 		viewBox="0 0 16 16"
-// 		fill="none"
-// 		xmlns="http://www.w3.org/2000/svg"
-// 	>
-// 		<G clipPath="url(#clip0_790_59125)">
-// 			<Rect x="4" y="4" width="8" height="8" rx="4" fill="#F0B849" />
-// 		</G>
-// 		<Rect
-// 			x="0.75"
-// 			y="0.75"
-// 			width="14.5"
-// 			height="14.5"
-// 			rx="7.25"
-// 			stroke="#F0B849"
-// 			strokeWidth="1.5"
-// 		/>
-// 		<defs>
-// 			<clipPath id="clip0_790_59125">
-// 				<Rect width="16" height="16" rx="8" fill="white" />
-// 			</clipPath>
-// 		</defs>
-// 	</SVG>
-// );
-
-// const ScheduledIcon = () => (
-// 	<SVG
-// 		width="16"
-// 		height="16"
-// 		viewBox="0 0 16 16"
-// 		fill="none"
-// 		xmlns="http://www.w3.org/2000/svg"
-// 	>
-// 		<G clipPath="url(#clip0_763_59172)">
-// 			<Circle cx="8" cy="8" r="4" fill="#4AB866" />
-// 		</G>
-// 		<Rect
-// 			x="0.75"
-// 			y="0.75"
-// 			width="14.5"
-// 			height="14.5"
-// 			rx="7.25"
-// 			stroke="#4AB866"
-// 			strokeWidth="1.5"
-// 		/>
-// 		<defs>
-// 			<clipPath id="clip0_763_59172">
-// 				<Rect width="16" height="16" rx="8" fill="white" />
-// 			</clipPath>
-// 		</defs>
-// 	</SVG>
-// );
-
-// const PublishIcon = () => (
-// 	<SVG
-// 		width="16"
-// 		height="16"
-// 		viewBox="0 0 16 16"
-// 		fill="none"
-// 		xmlns="http://www.w3.org/2000/svg"
-// 	>
-// 		<G clipPath="url(#clip0_823_59447)">
-// 			<Rect width="16" height="16" rx="8" fill="#4AB866" />
-// 			<Path
-// 				d="M11.1328 4.7334L6.93281 10.4001L4.73281 8.7334L4.13281 9.5334L7.13281 11.8001L11.9328 5.3334L11.1328 4.7334Z"
-// 				fill="#003008"
-// 			/>
-// 		</G>
-// 		<defs>
-// 			<clipPath id="clip0_823_59447">
-// 				<Rect width="16" height="16" rx="8" fill="white" />
-// 			</clipPath>
-// 		</defs>
-// 	</SVG>
-// );

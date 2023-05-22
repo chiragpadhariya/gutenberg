@@ -28,7 +28,8 @@ const PageItem = ( { postId, ...props } ) => {
 export default function SidebarNavigationScreenPages() {
 	const { records: pages, isResolving: isLoading } = useEntityRecords(
 		'postType',
-		'page'
+		'page',
+		{ status: 'any' }
 	);
 
 	return (

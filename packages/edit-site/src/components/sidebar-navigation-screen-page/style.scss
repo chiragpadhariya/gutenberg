@@ -1,0 +1,27 @@
+.edit-site-sidebar-navigation-screen-page__featured-media {
+	width: 100%;
+	border-radius: 2px;
+	margin-bottom: $grid-unit-20;
+	display: block;
+	max-height: 128px;
+	overflow: hidden;
+}
+
+.edit-site-sidebar-navigation-screen-page__excerpt {
+	font-style: italic;
+}
+
+.edit-site-sidebar-navigation-screen-page__modified {
+	margin: 0 0 $grid-unit-20 0;
+	color: $gray-600;
+	margin-left: $grid-unit-20;
+	.components-text {
+		color: $gray-600;
+	}
+	.edit-site-sidebar-navigation-screen-page__avatar {
+		width: 16px;
+		height: 16px;
+		border-radius: 999px;
+		background: $gray-700;
+	}
+}
